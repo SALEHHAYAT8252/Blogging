@@ -1,0 +1,113 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"/>
+<link rel="stylesheet" href="/css/navbar.css"/>
+
+<header class="header">
+  <nav class="navbar">
+
+    <!-- Logo -->
+    <a href="/blog" class="logo">
+      <div class="logo-icon-wrap">
+        <i class="fa-solid fa-pen-nib"></i>
+      </div>
+      <span class="logo-text">Blogify</span>
+    </a>
+
+    <!-- Nav Links -->
+    <div class="nav-links">
+      <a href="/blog" class="nav-item <%= typeof activePage !== 'undefined' && activePage === 'blogs' ? 'active' : '' %>">
+        <i class="fa-solid fa-newspaper"></i>
+        Blogs
+      </a>
+      <% if (locals.user) { %>
+        <a href="/user/dashboard" class="nav-item <%= typeof activePage !== 'undefined' && activePage === 'dashboard' ? 'active' : '' %>">
+          <i class="fa-solid fa-gauge"></i>
+          Dashboard
+        </a>
+      <% } %>
+    </div>
+
+    <!-- Right Side -->
+    <div class="nav-right">
+      <% if (locals.user) { %>
+
+        <a href="/blog/new" class="create-btn">
+          <i class="fa-solid fa-plus"></i>
+          New Post
+        </a>
+
+        <div class="profile-dropdown">
+          <a href="/user/profile" class="profile-trigger">
+            <img
+              src="<%= user.avatar.url %>"
+              alt="<%= user.username %>"
+              onerror="this.src='/images/uploads/default-avatar.png'"
+              class="profile-img"
+            />
+            <div class="profile-info">
+              <span class="welcome-text">Welcome back</span>
+              <span class="username-text"><%= user.fullname || user.username %></span>
+            </div>
+            <i class="fa-solid fa-chevron-down chevron"></i>
+          </a>
+
+          <div class="dropdown-menu">
+            <a href="/user/profile" class="dropdown-item">
+              <i class="fa-solid fa-user"></i> Profile
+            </a>
+            <a href="/user/dashboard" class="dropdown-item">
+              <i class="fa-solid fa-gauge"></i> Dashboard
+            </a>
+            <a href="/blog/new" class="dropdown-item">
+              <i class="fa-solid fa-pen-to-square"></i> New Post
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="/logout" class="dropdown-item dropdown-item-danger">
+              <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </a>
+          </div>
+        </div>
+
+      <% } else { %>
+
+        <a href="/signin" class="login-btn">Sign in</a>
+        <a href="/signup" class="signup-btn">Get started</a>
+
+      <% } %>
+    </div>
+
+    <!-- Mobile Hamburger -->
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="/blog" class="mobile-item"><i class="fa-solid fa-newspaper"></i> Blogs</a>
+    <% if (locals.user) { %>
+      <a href="/user/dashboard" class="mobile-item"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+      <a href="/blog/new" class="mobile-item"><i class="fa-solid fa-plus"></i> New Post</a>
+      <a href="/user/profile" class="mobile-item"><i class="fa-solid fa-user"></i> Profile</a>
+      <a href="/logout" class="mobile-item mobile-item-danger"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+    <% } else { %>
+      <a href="/signin" class="mobile-item"><i class="fa-solid fa-right-to-bracket"></i> Sign in</a>
+      <a href="/signup" class="mobile-item"><i class="fa-solid fa-user-plus"></i> Get started</a>
+    <% } %>
+  </div>
+</header>
+
+<script>
+  const hamburger = document.getElementById("hamburger");
+  const mobileMenu = document.getElementById("mobileMenu");
+  hamburger.addEventListener("click", () => {
+    hamburger.classList.toggle("open");
+    mobileMenu.classList.toggle("open");
+  });
+//   document.addEventListener("click", (e) => {
+//     if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
+//       hamburger.classList.remove("open");
+//       mobileMenu.classList.remove("open");
+//     }
+//   });
+</script>

@@ -1,0 +1,91 @@
+<%- include('../includes/header/head',{document:"Sign Up · Blog",style:"/css/auth.css"}); %>
+  <div class="auth-wrapper">
+    <div class="auth-card">
+
+      <div class="brand">
+        <div class="brand-icon">✍</div>
+        <h1>Blogify</h1>
+      </div>
+
+      <h2>Create your account</h2>
+      <p class="subtitle">Start writing and sharing your stories</p>
+
+      <% if (error) { %>
+        <div class="alert alert-error">⚠ <%= error %></div>
+      <% } %>
+
+      <form action="/signup" method="POST" enctype="multipart/form-data" novalidate>
+
+        <div class="avatar-group">
+          <label for="avatar" class="avatar-circle" title="Upload profile photo">
+            <img id="avatarPreview" src="/images/uploads/default-avatar.png" alt="Avatar preview"/>
+            <div class="avatar-overlay">📷</div>
+          </label>
+          <input type="file" id="avatar" name="avatar" accept="image/jpeg,image/png,image/webp" hidden/>
+          <p class="hint">JPG, PNG · Max 2MB</p>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fullname">Full name</label>
+            <input type="text" id="fullname" name="fullname" placeholder="John Doe" value="<%= formData.fullname || '' %>"/>
+          </div>
+          <div class="form-group">
+            <label for="username">Username <span class="req">*</span></label>
+            <input type="text" id="username" name="username" placeholder="johndoe" value="<%= formData.username || '' %>" required/>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email address <span class="req">*</span></label>
+          <div class="input-wrap">
+            <span class="input-icon-left">✉</span>
+            <input type="email" id="email" name="email" placeholder="john@example.com" value="<%= formData.email || '' %>" required/>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="password">Password <span class="req">*</span></label>
+            <div class="input-wrap">
+              <span class="input-icon-left">🔒</span>
+              <input type="password" id="password" name="password" placeholder="Min. 6 characters" required/>
+              <button type="button" class="eye-btn" onclick="togglePw('password',this)" tabindex="-1">👁</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="confirmPassword">Confirm password <span class="req">*</span></label>
+            <div class="input-wrap">
+              <span class="input-icon-left">🔒</span>
+              <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Repeat password" required/>
+              <button type="button" class="eye-btn" onclick="togglePw('confirmPassword',this)" tabindex="-1">👁</button>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary">Create account →</button>
+      </form>
+
+      <p class="auth-link">Already have an account? <a href="/signin">Sign in</a></p>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("avatar").addEventListener("change", function () {
+      const file = this.files[0];
+      console.log(file)
+      if (!file) return;
+      if (file.size > 2 * 1024 * 1024) { alert("Max 2MB."); this.value = ""; return; }
+      const reader = new FileReader();
+      reader.onload = e => document.getElementById("avatarPreview").src = e.target.result;
+      reader.readAsDataURL(file);
+    });
+    function togglePw(id, btn) {
+      const el = document.getElementById(id);
+      el.type = el.type === "password" ? "text" : "password";
+      btn.textContent = el.type === "password" ? "👁" : "🙈";
+    }
+  </script>
+
+
+<%- include('../includes/footer/foot'); %>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title><%= blog.title %> · Blogify</title>
+  <link rel="stylesheet" href="/css/blog.css"/>
+  <link rel="stylesheet" href="/css/detail.css"/>
+  <link rel="stylesheet" href="/css/navbar.css"/>
+</head>
+<body>
+
+  <%- include('../includes/navbar') %>
+
+  <main class="detail-container">
+
+    <!-- Cover Image -->
+    <div class="detail-cover">
+      <img src="<%= blog.coverImage.url %>" alt="<%= blog.title %>" onerror="this.src='/images/uploads/default-cover.png'"/>
+    </div>
+
+    <article class="detail-article">
+
+      <!-- Title -->
+      <h1 class="detail-title"><%= blog.title %></h1>
+
+      <!-- Meta -->
+      <div class="detail-meta">
+        <div class="detail-author">
+          <img src="<%= blog.author.avatar.url %>" alt="<%= blog.author.username %>" class="detail-avatar" onerror="this.src='/images/uploads/default-avatar.png'"/>
+          <div>
+            <p class="author-name"><%= blog.author.fullname || blog.author.username %></p>
+            <p class="post-date">
+              <%= new Date(blog.createdAt).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %>
+            </p>
+          </div>
+        </div>
+        <% if (locals.user && blog.author._id.toString() === user._id.toString()) { %>
+          <div class="detail-actions">
+            <a href="/blog/<%= blog._id %>/edit" class="btn-edit"><i class="fa-solid fa-pen"></i> Edit</a>
+            <form action="/blog/<%= blog._id %>/delete" method="POST" onsubmit="return confirm('Delete this post?')">
+              <button type="submit" class="btn-delete"><i class="fa-solid fa-trash"></i> Delete</button>
+            </form>
+          </div>
+        <% } %>
+      </div>
+
+      <hr class="divider"/>
+
+      <!-- Content -->
+      <div class="detail-content">
+        <%- blog.content.replace(/\n/g, '<br/>') %>
+      </div>
+
+    </article>
+
+    <!-- ── Comments Section ──────────────────────────────────────────── -->
+    <section class="comments-section" id="comments">
+
+      <h2 class="comments-heading">
+        <i class="fa-solid fa-comments"></i>
+        Comments <span class="comment-count"><%= comments.length %></span>
+      </h2>
+
+      <!-- Add Comment Form -->
+      <% if (locals.user) { %>
+        <div class="comment-form-wrap">
+          <img
+            src="<%= user.avatar.url %>"
+            alt="<%= user.username %>"
+            class="comment-avatar"
+            onerror="this.src='/images/uploads/default-avatar.png'"
+          />
+          <form action="/blog/<%= blog._id %>/comment" method="POST" class="comment-form">
+            <textarea
+              name="content"
+              placeholder="Write a comment..."
+              rows="3"
+              maxlength="1000"
+              required
+            ></textarea>
+            <div class="comment-form-footer">
+              <span class="char-hint">Max 1000 characters</span>
+              <button type="submit" class="comment-submit">
+                <i class="fa-solid fa-paper-plane"></i> Post comment
+              </button>
+            </div>
+          </form>
+        </div>
+      <% } else { %>
+        <div class="comment-login-prompt">
+          <i class="fa-solid fa-lock"></i>
+          <p>Please <a href="/signin">sign in</a> to leave a comment.</p>
+        </div>
+      <% } %>
+
+      <!-- Comment List -->
+      <div class="comment-list">
+        <% if (comments.length === 0) { %>
+          <div class="no-comments">
+            <i class="fa-regular fa-comment"></i>
+            <p>No comments yet. Be the first!</p>
+          </div>
+        <% } else { %>
+          <% comments.forEach(comment => { %>
+            <div class="comment-card">
+              <img
+                src="<%= comment.author.avatar.url %>"
+                alt="<%= comment.author.username %>"
+                class="comment-avatar"
+                onerror="this.src='/images/uploads/default-avatar.png'"
+              />
+              <div class="comment-body">
+                <div class="comment-header">
+                  <div>
+                    <span class="comment-author"><%= comment.author.fullname || comment.author.username %></span>
+                    <span class="comment-username">@<%= comment.author.username %></span>
+                  </div>
+                  <span class="comment-date">
+                    <%= new Date(comment.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %>
+                  </span>
+                </div>
+                <p class="comment-content"><%= comment.content %></p>
+
+                <!-- Delete — only for comment author -->
+                <% if (locals.user && comment.author._id.toString() === user._id.toString()) { %>
+                  <form action="/blog/<%= blog._id %>/comment/<%= comment._id %>/delete" method="POST" class="comment-delete-form">
+                    <button type="submit" class="comment-delete-btn" onclick="return confirm('Delete this comment?')">
+                      <i class="fa-solid fa-trash"></i> Delete
+                    </button>
+                  </form>
+                <% } %>
+              </div>
+            </div>
+          <% }) %>
+        <% } %>
+      </div>
+
+    </section>
+
+  </main>
+
+</body>
+</html>

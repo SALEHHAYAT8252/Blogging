@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>All Blogs</title>
+  <link rel="stylesheet" href="/css/blog.css"/>
+    <link rel="stylesheet" href="/css/navbar.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <%-include('../includes/navbar')%>
+
+  <main class="container">
+
+    <!-- Header -->
+    <div class="page-header">
+      <h1>Latest Posts</h1>
+      <p><%= blogs.length %> article<%= blogs.length !== 1 ? 's' : '' %> published</p>
+    </div>
+
+    <% if (error) { %>
+      <div class="alert alert-error">⚠ <%= error %></div>
+    <% } %>
+
+    <!-- Blog Grid -->
+    <% if (blogs.length === 0) { %>
+      <div class="empty-state">
+        <div class="empty-icon">📝</div>
+        <h2>No posts yet</h2>
+        <p>Be the first to share something.</p>
+        <% if (locals.user) { %>
+          <a href="/blog/new" class="btn-primary">Write a post</a>
+        <% } else { %>
+          <a href="/signup" class="btn-primary">Get started</a>
+        <% } %>
+      </div>
+    <% } else { %>
+      <div class="blog-grid">
+        <% blogs.forEach(blog => { %>
+          <article class="blog-card">
+            <a href="/blog/<%= blog._id %>" class="card-image-link">
+              <img
+                src="<%= blog.coverImage.url %>"
+                alt="<%= blog.title %>"
+                class="card-image"
+                onerror="this.src='/images/uploads/default-cover.png'"
+              />
+            </a>
+            <div class="card-body">
+              <a href="/blog/<%= blog._id %>" class="card-title"><%= blog.title %></a>
+              <p class="card-excerpt">
+                <%= blog.content.substring(0, 120) %><%= blog.content.length > 120 ? '...' : '' %>
+              </p>
+              <div class="card-meta">
+                <div class="card-author">
+                  <img
+                    src="<%= blog.author.avatar.url %>"
+                    alt="<%= blog.author.username %>"
+                    class="author-avatar"
+                    onerror="this.src='/images/uploads/default-avatar.png'"
+                  />
+                  <span><%= blog.author.fullname || blog.author.username %></span>
+                </div>
+                <span class="card-date">
+                  <%= new Date(blog.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %>
+                </span>
+              </div>
+            </div>
+          </article>
+        <% }) %>
+      </div>
+    <% } %>
+
+  </main>
+
+</body>
+</html>
